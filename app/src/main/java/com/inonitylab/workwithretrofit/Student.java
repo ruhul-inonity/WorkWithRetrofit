@@ -1,11 +1,18 @@
 package com.inonitylab.workwithretrofit;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by ruhul on 8/11/17.
  */
 
 public class Student {
-    String name,email,password;
+    @SerializedName("name")
+    String name;
+    @SerializedName("email")
+    String email;
+    @SerializedName("password")
+    String password;
 
     public String getName() {
         return name;

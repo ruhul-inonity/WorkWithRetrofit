@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -19,6 +20,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String BASE_URL = "http://uatapi.emanbd.com/api/";
 
     EditText name,email, password;
     Button save;
@@ -33,42 +36,59 @@ public class MainActivity extends AppCompatActivity {
         password= (EditText) findViewById(R.id.password);
         save = (Button) findViewById(R.id.save);
 
+
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 OkHttpClient client = new OkHttpClient();
-                //create gson object
                 Gson gson = new GsonBuilder()
                         .setLenient()
                         .create();
-                //creating retrofit instance
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("api.inonity.com")
+
+               /* final Student student = new Student();
+                student.setName(name.getText().toString());
+                student.setEmail(email.getText().toString());
+                student.setPassword(password.getText().toString());*/
+
+               User user = new User();
+                user.setMobile("01712345678");
+                user.setPassword("password");
+
+/*                //creating retrofit instance
+*/                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(BASE_URL)
                         .client(client)
                         .addConverterFactory(GsonConverterFactory.create(gson))
                         .build();
+ /*               HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+                logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+                OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+                httpClient.addInterceptor(logging);
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(BASE_URL)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .client(httpClient.build())
+                        .build();*/
 
                 ApiService service = retrofit.create(ApiService.class);
-                Student student = new Student();
-                student.setName(name.getText().toString());
-                student.setEmail(email.getText().toString());
-                student.setPassword(password.getText().toString());
-                Call<Student> call = service.insertData(student.getName(),student.getEmail(),student.getPassword());
+                Log.d("test", "onClick: ............................ "+new Gson().toJson(user));
 
-                call.enqueue(new Callback<Student>() {
+                Call<LoginResponse> call = service.createUser(user);
+
+                call.enqueue(new Callback<LoginResponse>() {
                     @Override
-                    public void onResponse(Call<Student> call, Response<Student> response) {
-                        Log.d("MainActivity", "...........................onResponse: " +response);
+                    public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                        Log.d("MainActivity", "...........................onResponse: " +response.raw());
                         name.setText("");
                         email.setText("");
                         password.setText("");
                     }
 
                     @Override
-                    public void onFailure(Call<Student> call, Throwable throwable) {
-                        Log.i("Hello",""+throwable);
-                        Toast.makeText(MainActivity.this, "Throwable"+throwable, Toast.LENGTH_LONG).show();
-
+                    public void onFailure(Call<LoginResponse> call, Throwable throwable) {
+                        Log.i("onFailure","................ "+throwable);
                     }
                 });
 

@@ -1,8 +1,11 @@
 package com.inonitylab.workwithretrofit;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 /**
@@ -11,6 +14,12 @@ import retrofit2.http.POST;
 
 public interface ApiService {
     @FormUrlEncoded
-    @POST("/user/index.php")
-    Call<Student> insertData(@Field("name") String name, @Field("email") String email, @Field("password") String password);
+    @POST("login")
+    Call<Student> insertData(@Body Student student);
+
+
+
+
+    @POST("login")
+    Call<LoginResponse> createUser(@Body User user);
 }
